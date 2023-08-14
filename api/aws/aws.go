@@ -2,10 +2,11 @@ package main
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
-
+	"table_functions"
 	// "github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsdynamodb"
+	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
@@ -18,6 +19,23 @@ type TableBasics struct {
 	TableName      string
 }
 
+
+
+
+basics := TableBasics{
+		DynamoDbClient: dynamoDbClient,
+		TableName:     "YourTableName", // Replace with your table name
+
+		tableDesc, err := basics.CreateMovieTable()
+	if err != nil {
+		log.Printf("Error creating movie table: %v\n", err)
+	} else {
+		fmt.Println("Movie table created successfully!")
+		fmt.Printf("Table description: %+v\n", tableDesc)
+	}
+}
+
+
 func NewAwsStack(scope constructs.Construct, id string, props *AwsStackProps, table *TableBasics) awscdk.Stack {
 	var sprops awscdk.StackProps
 	if props != nil {
@@ -25,6 +43,7 @@ func NewAwsStack(scope constructs.Construct, id string, props *AwsStackProps, ta
 	}
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
+	table_functions.CreateMovieTable();
 	// The code that defines your stack goes here
 
 	
@@ -44,6 +63,12 @@ func main() {
 	}
 
 	stack := awscdk.NewStack(app, jsii.String("aws"), stackProps)
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		panic(err)
+	}
+
+	dynamoDbClient := dynamodb.NewFromConfig(cfg)
 
 	awsdynamodb.NewTable(stack, jsii.String("Test-Table"), &awsdynamodb.TableProps{
 		PartitionKey: &awsdynamodb.Attribute{
