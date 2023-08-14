@@ -3,9 +3,11 @@ package main
 import (
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
+	"github.com/aws/aws-cdk-go/awscdk/awsdynamodb"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/aws-cdk-go/awscdklambdagoalpha/v2"
 	"github.com/aws/constructs-go/constructs/v10"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/jsii-runtime-go"
 )
 
@@ -20,6 +22,12 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 	}
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
+
+	
+
+	   
+
+
 	// Create the Lambda function for createUser
 	createUserLambda := awscdklambdagoalpha.NewGoFunction(stack, jsii.String("createUserLambda"), &awscdklambdagoalpha.GoFunctionProps{
 		Runtime: awslambda.Runtime_GO_1_X(),
@@ -28,6 +36,11 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 			GoBuildFlags: jsii.Strings(`-ldflags "-s -w"`),
 		},
 	})
+
+
+	
+
+
 
 	// Create API Gateway
 	restApi := awsapigateway.NewRestApi(stack, jsii.String("OvertoneAPI"), &awsapigateway.RestApiProps{
