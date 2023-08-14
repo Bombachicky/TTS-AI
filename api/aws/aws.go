@@ -9,37 +9,38 @@ import (
 	"github.com/aws/jsii-runtime-go"
 )
 
-type AppServerlessCdkGoStackProps struct {
+type OvertoneProps struct {
 	awscdk.StackProps
 }
 
-func NewAppServerlessCdkGoStack(scope constructs.Construct, id string, props *AppServerlessCdkGoStackProps) awscdk.Stack {
+func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) awscdk.Stack {
 	var sprops awscdk.StackProps
 	if props != nil {
 		sprops = props.StackProps
 	}
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
-	// create Lambda function
-	getHandler := awscdklambdagoalpha.NewGoFunction(stack, jsii.String("myGoHandler"), &awscdklambdagoalpha.GoFunctionProps{
+	// Create the Lambda function for createUser
+	createUserLambda := awscdklambdagoalpha.NewGoFunction(stack, jsii.String("createUserLambda"), &awscdklambdagoalpha.GoFunctionProps{
 		Runtime: awslambda.Runtime_GO_1_X(),
-		Entry:   jsii.String("./lambda"),
+		Entry:   jsii.String("./lambda/createUser"),  // Pointing to the lambda folder
 		Bundling: &awscdklambdagoalpha.BundlingOptions{
 			GoBuildFlags: jsii.Strings(`-ldflags "-s -w"`),
 		},
 	})
 
-	// create API Gateway
-	restApi := awsapigateway.NewRestApi(stack, jsii.String("myGoApi"), &awsapigateway.RestApiProps{
-		RestApiName:    jsii.String("myGoApi"),
+	// Create API Gateway
+	restApi := awsapigateway.NewRestApi(stack, jsii.String("OvertoneAPI"), &awsapigateway.RestApiProps{
+		RestApiName:    jsii.String("OvertoneAPI"),
 		CloudWatchRole: jsii.Bool(false),
 	})
 
-	// create API Gateway resource
-	restApi.Root().AddResource(jsii.String("hello-world"), &awsapigateway.ResourceOptions{}).AddMethod(
-		jsii.String("GET"),
-		awsapigateway.NewLambdaIntegration(getHandler, &awsapigateway.LambdaIntegrationOptions{}),
-		restApi.Root().DefaultMethodOptions(),
+	// Add a POST endpoint to create users
+	userResource := restApi.Root().AddResource(jsii.String("users"), nil)
+	userResource.AddMethod(
+		jsii.String("POST"),
+		awsapigateway.NewLambdaIntegration(createUserLambda, &awsapigateway.LambdaIntegrationOptions{}),
+		&awsapigateway.MethodOptions{},
 	)
 
 	return stack
@@ -48,7 +49,7 @@ func NewAppServerlessCdkGoStack(scope constructs.Construct, id string, props *Ap
 func main() {
 	app := awscdk.NewApp(nil)
 
-	NewAppServerlessCdkGoStack(app, "AppServerlessCdkGoStack", &AppServerlessCdkGoStackProps{
+	OvertoneStack(app, "OvertoneStack", &OvertoneProps{
 		awscdk.StackProps{
 			Env: env(),
 		},
