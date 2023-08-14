@@ -29,13 +29,7 @@ func NewAwsStack(scope constructs.Construct, id string, props *AwsStackProps, ta
 
 	
 
-	// awsdynamodb.NewTable(stack, jsii.String("Test-Table"), &awsdynamodb.TableProps{
-	// 	PartitionKey: &awsdynamodb.Attribute{
-	// 		Name: jsii.String("userId"),
-	// 		Type: awsdynamodb.AttributeType_STRING,
-	// 	},
-	// 	RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
-	// })
+	
 
 	return stack
 
