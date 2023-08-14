@@ -1,24 +1,24 @@
-version: '3.8'
+version: "3.8"
 services:
- dynamodb-local:
-   command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
-   image: "amazon/dynamodb-local:latest"
-   container_name: dynamodb-local
-   ports:
-     - "8000:8000"
-   user: root
-   volumes:
-     - "./docker/dynamodb:/home/dynamodblocal/data"
-   working_dir: /home/dynamodblocal
- app-node:
-   depends_on:
-     - dynamodb-local
-   image: amazon/aws-cli
-   container_name: app-node
-   ports:
-    - "8080:8080"
-   environment:
-     AWS_ACCESS_KEY_ID: 'BUBBY'
-     AWS_SECRET_ACCESS_KEY: 'BOMBA'
-   command:
-     dynamodb describe-limits --endpoint-url http://dynamodb-local:8000 --region us-west-2
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+    user: root
+    volumes:
+      - "./docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+  app-node:
+    depends_on:
+      - dynamodb-local
+    image: amazon/aws-cli
+    container_name: app-node
+    ports:
+      - "8080:8080"
+    environment:
+      AWS_ACCESS_KEY_ID: "DUMMYACCESSKEY"
+      AWS_SECRET_ACCESS_KEY: "DUMMYSECRETKEY"
+    command: 
+      dynamodb describe-limits --endpoint-url http://localhost:8000 --region us-east-1
