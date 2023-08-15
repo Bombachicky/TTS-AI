@@ -1,6 +1,6 @@
 import Navbar from "../components/navbar";
 import SignIn from "../components/signInForm";
-import SignUp from "../components/singUpForm";
+import SignUp from "../components/signUpForm";
 
 export default function SignUpPage(){
     return (

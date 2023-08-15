@@ -11,6 +11,8 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	
+	"github.com/google/uuid"
 )
 
 type User struct {
@@ -53,12 +55,15 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		return events.APIGatewayProxyResponse{Body: "Error marshalling response", StatusCode: 500}, err
 	}
 
-	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
+	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200, Headers: map[string]string{
+        "Access-Control-Allow-Origin":      "*",
+        "Access-Control-Allow-Credentials": "true",
+    }}, nil
 }
 
 func CreateUser(ctx context.Context, user User) (User, error) {
-	if user.UserId == "" || user.Username == "" || user.Password == "" {
-		return User{}, errors.New("UserId, Username, and Password are required")
+	if  user.Username == "" || user.Password == "" {
+		return User{}, errors.New("Username, and Password are required")
 	}
 
 	// Defaults for Speed and Pitch if they are not set
@@ -69,10 +74,14 @@ func CreateUser(ctx context.Context, user User) (User, error) {
 		user.Pitch = 50
 	}
 
+	// Generate a UUID for userId
+    userId := uuid.New().String()
+
+
 	input := &dynamodb.PutItemInput{
-		TableName: aws.String("Overtone_users"),
+		TableName: aws.String("OvertoneTable"),
 		Item: map[string]types.AttributeValue{
-			"UserId":   &types.AttributeValueMemberS{Value: user.UserId},
+			"UserId":   &types.AttributeValueMemberS{Value: userId},
 			"Email":    &types.AttributeValueMemberS{Value: user.Email},
 			"Username": &types.AttributeValueMemberS{Value: user.Username},
 			"Password": &types.AttributeValueMemberS{Value: user.Password},

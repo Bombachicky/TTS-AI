@@ -1,6 +1,41 @@
+"use client"
+
 import Navbar from "../components/navbar"
+import React, { useState } from "react";
+import axios from "axios"; // Import the axios library
+
+
 
 export default function SignIn(){
+   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const userData = {
+      email: email,
+      password: password,
+    };
+
+    
+    try {
+      const response = await axios.post(
+        'https://5f0ek1er9i.execute-api.us-east-1.amazonaws.com/prod/users',
+        userData
+      );
+      
+      // Handle success response
+      console.log("User signed in:", response.data);
+      
+      // Redirect or update app state as needed
+    } catch (error) {
+      // Handle error
+      console.error("Error signing in:", error);
+    }
+  };
+
+
+
     return(<>
     
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -14,7 +49,7 @@ export default function SignIn(){
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           {/* Changing form post to get */}
-          <form className="space-y-6" action="#" method="GET">
+          <form className="space-y-6" onSubmit={handleSignIn}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-primary">
                 Email address
