@@ -17,7 +17,6 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 	}
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
-	
 	// Create DynamoDB Table
 	 lib.CreateDynamoTable(stack)
 
@@ -36,7 +35,6 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 	// Setup Cognito User Pool
 	lib.CreateUserPool(stack)
 
-	
 
 	return stack
 }
