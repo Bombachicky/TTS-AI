@@ -5,13 +5,10 @@ import SignUp from "../components/signUpForm";
 export default function SignUpPage(){
     return (
     <>
-    <div>
-        
-        <Navbar></Navbar>
-         <SignUp></SignUp>
-    </div>
-       
-    </>) 
-
-    
+        <div>
+            <Navbar></Navbar>
+            <SignUp></SignUp>
+        </div>
+    </>
+    ) 
 }

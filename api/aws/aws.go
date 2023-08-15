@@ -36,7 +36,7 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 
 
 	// Create DynamoDB table
-	 	awsdynamodb.NewTable(stack, jsii.String("OvertoneTable"), &awsdynamodb.TableProps{
+	awsdynamodb.NewTable(stack, jsii.String("OvertoneTable"), &awsdynamodb.TableProps{
 		BillingMode: awsdynamodb.BillingMode_PAY_PER_REQUEST,
 		TableName:   jsii.String("OvertoneTable"),
 		PartitionKey: &awsdynamodb.Attribute{
@@ -44,7 +44,7 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 			Type: awsdynamodb.AttributeType_STRING,
 		},
 	})
-	   
+
 	// Create the Lambda function for createUser
 	createUserLambda := awscdklambdagoalpha.NewGoFunction(stack, jsii.String("createUserLambda"), &awscdklambdagoalpha.GoFunctionProps{
 		Runtime: awslambda.Runtime_GO_1_X(),
@@ -55,18 +55,12 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 		Role: dynamoDBRole,
 	})
 
-	// Add AWSLambdaBasicExecutionRole managed policy to the Lambda execution role
-	
-   
-
 	// Create API Gateway
 	restApi := awsapigateway.NewRestApi(stack, jsii.String("OvertoneAPI"), &awsapigateway.RestApiProps{
 		
 		RestApiName:    jsii.String("OvertoneAPI"),
 		CloudWatchRole: jsii.Bool(false),
-  })
-
-
+	})
 
 	// Add a POST endpoint to create users
 	userResource := restApi.Root().AddResource(jsii.String("users"), nil)
@@ -77,10 +71,10 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 	)
 
 	userResource.AddCorsPreflight(&awsapigateway.CorsOptions{
-    AllowHeaders: jsii.Strings("Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent"),
-    AllowMethods: jsii.Strings("OPTIONS,POST"),
-    AllowOrigins: jsii.Strings("*"), // For development, you can limit this to your localhost
-    MaxAge:       awscdk.Duration_Seconds(aws.Float64(3600)),
+		AllowHeaders: jsii.Strings("Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent"),
+		AllowMethods: jsii.Strings("OPTIONS,POST"),
+		AllowOrigins: jsii.Strings("*"), // For development, you can limit this to your localhost
+		MaxAge:       awscdk.Duration_Seconds(aws.Float64(3600)),
 })
 
 		// log lambda function ARN

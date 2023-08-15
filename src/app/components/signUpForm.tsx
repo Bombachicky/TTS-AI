@@ -53,8 +53,8 @@ export default function SignUp(){
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h3 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-primary">PENDING LOGO</h3>
-           
-           {isSignedUp ? (
+          
+          {isSignedUp ? (
         <div className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-primary">
           Thank you for signing up!
         </div>
@@ -88,7 +88,6 @@ export default function SignUp(){
                 <label htmlFor="password" className="block text-sm font-medium leading-6 text-primary">
                   Password
                 </label>
-               
               </div>
               <div className="mt-2">
                 <input
@@ -107,7 +106,6 @@ export default function SignUp(){
                 <label htmlFor="username" className="block text-sm font-medium leading-6 text-primary">
                   Username
                 </label>
-               
               </div>
               <div className="mt-2">
                 <input
@@ -138,11 +136,5 @@ export default function SignUp(){
       )}
     </div>
   </div>
-
-
-
-
-
-
       )
 }

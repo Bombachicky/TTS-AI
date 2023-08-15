@@ -23,10 +23,10 @@ const Navbar = () =>{
                 <Link href="/sign-in" className='nav-link'>
                     Sign In
                 </Link>
-                 <Link href="/sign-up" className='nav-link'>
+                <Link href="/sign-up" className='nav-link'>
                     Sign Up
                 </Link>
-                 <Link href="/" className='nav-link'>
+                <Link href="/" className='nav-link'>
                     Donate IM POOR
                 </Link>
                 <button  className="nav-btn nav-close-btn text-btn" onClick={showNavbar} >
