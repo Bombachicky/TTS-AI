@@ -55,12 +55,26 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 		Role: dynamoDBRole,
 	})
 
+	// Create the Lambda function for getUser
+	getUserLambda := awscdklambdagoalpha.NewGoFunction(stack, jsii.String("getUserLambda"), &awscdklambdagoalpha.GoFunctionProps{
+		Runtime: awslambda.Runtime_GO_1_X(),
+		Entry:   jsii.String("./lambda/getUser"),  // Pointing to the lambda folder with the getUser code
+		Bundling: &awscdklambdagoalpha.BundlingOptions{
+			GoBuildFlags: jsii.Strings(`-ldflags "-s -w"`),
+		},
+    	Role: dynamoDBRole,
+})
+
+	
+
 	// Create API Gateway
 	restApi := awsapigateway.NewRestApi(stack, jsii.String("OvertoneAPI"), &awsapigateway.RestApiProps{
 		
 		RestApiName:    jsii.String("OvertoneAPI"),
 		CloudWatchRole: jsii.Bool(false),
 	})
+
+	
 
 	// Add a POST endpoint to create users
 	userResource := restApi.Root().AddResource(jsii.String("users"), nil)
@@ -70,9 +84,18 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 		&awsapigateway.MethodOptions{},
 	)
 
+	// Add a GET endpoint to get a user by UserId
+	// Add a new resource for the {userId} path parameter under /users
+	userIdResource := userResource.AddResource(jsii.String("{userId}"), nil)
+	userIdResource.AddMethod(
+		jsii.String("GET"),
+		awsapigateway.NewLambdaIntegration(getUserLambda, &awsapigateway.LambdaIntegrationOptions{}),
+		&awsapigateway.MethodOptions{},
+	)
+
 	userResource.AddCorsPreflight(&awsapigateway.CorsOptions{
 		AllowHeaders: jsii.Strings("Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent"),
-		AllowMethods: jsii.Strings("OPTIONS,POST"),
+		AllowMethods: jsii.Strings("OPTIONS,POST,GET"),
 		AllowOrigins: jsii.Strings("*"), // For development, you can limit this to your localhost
 		MaxAge:       awscdk.Duration_Seconds(aws.Float64(3600)),
 })
