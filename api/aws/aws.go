@@ -6,7 +6,6 @@ import (
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsdynamodb"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/aws-cdk-go/awscdklambdagoalpha/v2"
-	
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/constructs-go/constructs/v10"
@@ -62,10 +61,18 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 		Bundling: &awscdklambdagoalpha.BundlingOptions{
 			GoBuildFlags: jsii.Strings(`-ldflags "-s -w"`),
 		},
-    	Role: dynamoDBRole,
-})
+		Role: dynamoDBRole,
+	})
 
-	
+	// Create the Lambda function for PollySynthesize
+	pollySynthesizeLambda := awscdklambdagoalpha.NewGoFunction(stack, jsii.String("pollySynthesizeLambda"), &awscdklambdagoalpha.GoFunctionProps{
+		Runtime: awslambda.Runtime_GO_1_X(),
+		Entry:   jsii.String("./lambda/polly"), // Pointing to the lambda folder with the pollySynthesize code
+		Bundling: &awscdklambdagoalpha.BundlingOptions{
+			GoBuildFlags: jsii.Strings(`-ldflags "-s -w"`),
+		},
+		Role: dynamoDBRole, // Assuming you want to use the same role
+	})
 
 	// Create API Gateway
 	restApi := awsapigateway.NewRestApi(stack, jsii.String("OvertoneAPI"), &awsapigateway.RestApiProps{
@@ -73,8 +80,6 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 		RestApiName:    jsii.String("OvertoneAPI"),
 		CloudWatchRole: jsii.Bool(false),
 	})
-
-	
 
 	// Add a POST endpoint to create users
 	userResource := restApi.Root().AddResource(jsii.String("users"), nil)
@@ -90,6 +95,14 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 	userIdResource.AddMethod(
 		jsii.String("GET"),
 		awsapigateway.NewLambdaIntegration(getUserLambda, &awsapigateway.LambdaIntegrationOptions{}),
+		&awsapigateway.MethodOptions{},
+	)
+
+	// Add a POST endpoint to synthesize text to speech
+	pollyResource := restApi.Root().AddResource(jsii.String("synthesize"), nil)
+	pollyResource.AddMethod(
+		jsii.String("POST"),
+		awsapigateway.NewLambdaIntegration(pollySynthesizeLambda, &awsapigateway.LambdaIntegrationOptions{}),
 		&awsapigateway.MethodOptions{},
 	)
 
