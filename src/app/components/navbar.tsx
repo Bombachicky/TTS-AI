@@ -37,7 +37,8 @@ const Navbar = () =>{
                 <FaBars/>
             </button>
         </header>
-    </>)}
+    </>
+    )}
 
 
 
