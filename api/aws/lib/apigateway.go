@@ -1,14 +1,14 @@
 package lib
 
 import (
-    "github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
-    "github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
-    "github.com/aws/jsii-runtime-go"
 	"github.com/aws/aws-cdk-go/awscdk/v2"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/jsii-runtime-go"
 )
 
-func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserLambda awslambda.Function , pollySynthesizeLambda awslambda.Function) awsapigateway.RestApi {
+func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserLambda awslambda.Function, pollySynthesizeLambda awslambda.Function, openAILambda awslambda.Function) awsapigateway.RestApi {
     
 	// Create API Gateway
 	restApi := awsapigateway.NewRestApi(stack, jsii.String("OvertoneAPI"), &awsapigateway.RestApiProps{
@@ -41,6 +41,14 @@ func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserL
 		&awsapigateway.MethodOptions{},
 	)
 
+	// Add a POST endpoint for OpenAI to respond to user input
+	openAIResource := userResource.AddResource(jsii.String("respond"), nil)
+	openAIResource.AddMethod(
+		jsii.String("POST"),
+		awsapigateway.NewLambdaIntegration(openAILambda, &awsapigateway.LambdaIntegrationOptions{}),
+		&awsapigateway.MethodOptions{},
+	)
+
 	// Add Cors Prefight configuration
 	userResource.AddCorsPreflight(&awsapigateway.CorsOptions{
 		AllowHeaders: jsii.Strings("Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent"),
@@ -55,7 +63,5 @@ func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserL
 		Description: jsii.String("Lambda function ARN"),
 	})
 
-	
-	
     return restApi
 }

@@ -39,3 +39,14 @@ func CreatePollySynthesizeLambda(stack awscdk.Stack, dynamoDBRole awsiam.IRole) 
 		Role: dynamoDBRole,
 	})
 }
+
+func CreateOpenAILambda(stack awscdk.Stack, dynamoDBRole awsiam.IRole) awslambda.Function {
+	return awscdklambdagoalpha.NewGoFunction(stack, jsii.String("openAILambda"), &awscdklambdagoalpha.GoFunctionProps{
+		Runtime: awslambda.Runtime_GO_1_X(),
+		Entry:   jsii.String("./lambda/openai"),
+		Bundling: &awscdklambdagoalpha.BundlingOptions{
+			GoBuildFlags: jsii.Strings(`-ldflags "-s -w"`),
+		},
+		Role: dynamoDBRole,
+	})
+}
