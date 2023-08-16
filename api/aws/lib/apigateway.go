@@ -9,6 +9,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 )
 
+// Create API Func
+// Parameters: createUserLambda, getUserLambda, pollySynthesizeLambda
+// Return Type: awsapigateway.RestApi 
 func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserLambda awslambda.Function , pollySynthesizeLambda awslambda.Function ) awsapigateway.RestApi {
     
 	// Create API Gateway
@@ -18,6 +21,7 @@ func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserL
 		CloudWatchRole: jsii.Bool(false),
 	})
 
+	// Create Cognito User Pool With Required Attributes : Email And Auto Email Verification
 	userPool := awscognito.NewUserPool(stack, jsii.String("OvertoneUserPool"), &awscognito.UserPoolProps{
 		UserPoolName: jsii.String("OvertoneUserPool"),
 		SignInAliases: &awscognito.SignInAliases{
@@ -30,20 +34,27 @@ func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserL
 				Required:  jsii.Bool(true),
 			},
 		},
+		AutoVerify: &awscognito.AutoVerifiedAttrs{
+		Email: jsii.Bool(true),
+		},
 		// Add other desired properties...
 	})
 
-	
+	// User Pool Client
+	awscognito.NewUserPoolClient(stack, jsii.String("MyAppClient"), &awscognito.UserPoolClientProps{
+		UserPool: userPool,
+		GenerateSecret: jsii.Bool(false), // Set to true if you need a secret (commonly for server-side apps)
+		// ... other App Client configurations ...
+	})
+
+	// User Pool Authorization
 	authorizer := awsapigateway.NewCognitoUserPoolsAuthorizer(stack, jsii.String("APIGatewayAuthorizer"), &awsapigateway.CognitoUserPoolsAuthorizerProps{
-        // RestApiId: restApi.RestApiId(),
-        // Type: awsapigateway.AuthorizationType.COGNITO,
-        // IdentitySource: "method.request.header.Authorization",
-        // ProviderArns: []string{userPool.UserPoolArn()},
 		CognitoUserPools: &[]awscognito.IUserPool{
 		userPool,
 		},
     })
 
+	// Sign Up Page EndPoint With Cognito Authorizer: POST
 	userResource := restApi.Root().AddResource(jsii.String("users"), nil)
 	userResource.AddMethod(
 		jsii.String("POST"),
@@ -55,8 +66,7 @@ func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserL
 		},
 	)
 
-	// Add a GET endpoint to get a user by UserId
-	// Add a new resource for the {userId} path parameter under /users
+	// Sign In Page EndPoint With Cognito Authorizer: GET
 	userIdResource := userResource.AddResource(jsii.String("{userId}"), nil)
 	userIdResource.AddMethod(
 		jsii.String("GET"),
