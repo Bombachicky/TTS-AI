@@ -41,18 +41,27 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	var user User
 	err := json.Unmarshal([]byte(request.Body), &user)
 	if err != nil {
-		return events.APIGatewayProxyResponse{Body: "Error parsing request body", StatusCode: 400}, err
+		return events.APIGatewayProxyResponse{Body: "Error parsing request body", StatusCode: 400 ,  Headers: map[string]string{
+            "Access-Control-Allow-Origin":      "*",
+            "Access-Control-Allow-Credentials": "true",
+        },}, err
 	}
 
 	// Create user logic
 	user, err = CreateUser(ctx, user)
 	if err != nil {
-		return events.APIGatewayProxyResponse{Body: "Error creating user", StatusCode: 500}, err
+		return events.APIGatewayProxyResponse{Body: "Error creating user", StatusCode: 500,  Headers: map[string]string{
+            "Access-Control-Allow-Origin":      "*",
+            "Access-Control-Allow-Credentials": "true",
+        },}, err
 	}
 
 	body, err := json.Marshal(user)
 	if err != nil {
-		return events.APIGatewayProxyResponse{Body: "Error marshalling response", StatusCode: 500}, err
+		return events.APIGatewayProxyResponse{Body: "Error marshalling response", StatusCode: 500,  Headers: map[string]string{
+            "Access-Control-Allow-Origin":      "*",
+            "Access-Control-Allow-Credentials": "true",
+        },}, err
 	}
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200, Headers: map[string]string{
