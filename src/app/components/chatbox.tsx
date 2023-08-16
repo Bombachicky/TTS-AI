@@ -1,3 +1,6 @@
+import { useState } from "react";
+import axios from "axios";
+
 function ChatBox() {
   return (
     <>
@@ -6,12 +9,16 @@ function ChatBox() {
           <div>HIIIi</div>
           <div>ok</div>
         </div>
-        <div className="flex flex-row justify-center">
-          <input
-            type="text"
-            placeholder="Type a message"
-            className="w-1/2 h-10 px-4 rounded-xl"
-          />
+        <div>
+          <form className="flex justify-center">
+            <input
+              id="message"
+              type="text"
+              placeholder="Type a message"
+              required
+              className="w-2/3 h-10 px-4 rounded-xl"
+            />
+          </form>
         </div>
       </div>
     </>
