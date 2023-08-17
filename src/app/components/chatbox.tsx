@@ -1,7 +1,29 @@
+"use client";
 import { useState } from "react";
 import axios from "axios";
 
 function ChatBox() {
+  const [message, setMessage] = useState("");
+
+  const handleMessage = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const message = formData.get("message") as string;
+    console.log(message);
+
+    try {
+      const response = await axios.post(
+        "https://5f0ek1er9i.execute-api.us-east-1.amazonaws.com/prod/users/message",
+        {
+          message: message,
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.log("Error: " + error);
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col gap-28">
@@ -10,9 +32,10 @@ function ChatBox() {
           <div>ok</div>
         </div>
         <div>
-          <form className="flex justify-center">
+          <form className="flex justify-center" onSubmit={handleMessage}>
             <input
               id="message"
+              name="message"
               type="text"
               placeholder="Type a message"
               required
