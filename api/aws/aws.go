@@ -11,6 +11,7 @@ type OvertoneProps struct {
 }
 
 func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) awscdk.Stack {
+	// Stack Creation
 	var sprops awscdk.StackProps
 	if props != nil {
 		sprops = props.StackProps
@@ -29,6 +30,7 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 	createPollySynthesizeLambda := lib.CreatePollySynthesizeLambda(stack, lambdaRole)
 	openAILambda := lib.CreateOpenAILambda(stack, lambdaRole)
 
+<<<<<<< HEAD
 	// Create API and Endpoints
 	lib.CreateAPI(stack, createUserLambda, getUserLambda, createPollySynthesizeLambda, openAILambda)
 
@@ -37,6 +39,10 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 	lib.CreateUserPool(stack)
 
 
+=======
+	// Create API and Endpoints and Add Cognito Authorizer
+	lib.CreateAPI(stack, createUserLambda, getUserLambda, createPollySynthesizeLambda)
+>>>>>>> main
 	return stack
 }
 

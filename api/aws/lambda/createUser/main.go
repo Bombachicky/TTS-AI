@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"errors"
+
     "strconv"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
@@ -12,14 +12,12 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	
-	"github.com/google/uuid"
+
 )
 
 type User struct {
-	UserId string `json:"userId"`
 	Email string `json:"email"`
 	Username string `json:"username"`
-	Password string `json:"password"`
 	Speed int `json:"speed"`
 	Pitch int `json:"pitch"`
 }
@@ -41,30 +39,44 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	var user User
 	err := json.Unmarshal([]byte(request.Body), &user)
 	if err != nil {
-		return events.APIGatewayProxyResponse{Body: "Error parsing request body", StatusCode: 400}, err
+		return events.APIGatewayProxyResponse{Body: "Error parsing request body", StatusCode: 400 ,  Headers: map[string]string{
+            "Access-Control-Allow-Origin":"*",
+            "Access-Control-Allow-Credentials": "true",
+			"Access-Control-Allow-Methods":     "POST, GET, OPTIONS", // Add any other methods you'd want to support
+    		"Access-Control-Allow-Headers":     "Content-Type, Authorization", // Add other headers you might be sending in requests
+        },}, err
 	}
 
 	// Create user logic
 	user, err = CreateUser(ctx, user)
 	if err != nil {
-		return events.APIGatewayProxyResponse{Body: "Error creating user", StatusCode: 500}, err
+		return events.APIGatewayProxyResponse{Body: "Error creating user", StatusCode: 500,  Headers: map[string]string{
+            "Access-Control-Allow-Origin":"*",
+            "Access-Control-Allow-Credentials": "true",
+			"Access-Control-Allow-Methods":     "POST, GET, OPTIONS", // Add any other methods you'd want to support
+    		"Access-Control-Allow-Headers":     "Content-Type, Authorization", // Add other headers you might be sending in requests
+        },}, err
 	}
 
 	body, err := json.Marshal(user)
 	if err != nil {
-		return events.APIGatewayProxyResponse{Body: "Error marshalling response", StatusCode: 500}, err
+		return events.APIGatewayProxyResponse{Body: "Error marshalling response", StatusCode: 500,  Headers: map[string]string{
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": "true",
+			"Access-Control-Allow-Methods": "POST, GET, OPTIONS", // Add any other methods you'd want to support
+    		"Access-Control-Allow-Headers": "Content-Type, Authorization", // Add other headers you might be sending in requests
+        },}, err
 	}
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200, Headers: map[string]string{
-        "Access-Control-Allow-Origin":      "*",
-        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Origin":  "*",
+        "Access-Control-Allow-Credentials":"true",
+		"Access-Control-Allow-Methods":"POST, GET, OPTIONS", // Add any other methods you'd want to support
+    	"Access-Control-Allow-Headers":"Content-Type, Authorization", // Add other headers you might be sending in requests
     }}, nil
 }
 
 func CreateUser(ctx context.Context, user User) (User, error) {
-	if  user.Username == "" || user.Password == "" {
-		return User{}, errors.New("Username, and Password are required")
-	}
 
 	// Defaults for Speed and Pitch if they are not set
 	if user.Speed == 0 {
@@ -74,17 +86,14 @@ func CreateUser(ctx context.Context, user User) (User, error) {
 		user.Pitch = 50
 	}
 
-	// Generate a UUID for userId
-    userId := uuid.New().String()
+	
 
 
 	input := &dynamodb.PutItemInput{
-		TableName: aws.String("OvertoneTable"),
+		TableName: aws.String("OverToneTable"),
 		Item: map[string]types.AttributeValue{
-			"UserId":   &types.AttributeValueMemberS{Value: userId},
 			"Email":    &types.AttributeValueMemberS{Value: user.Email},
 			"Username": &types.AttributeValueMemberS{Value: user.Username},
-			"Password": &types.AttributeValueMemberS{Value: user.Password},
 			"Speed":    &types.AttributeValueMemberN{Value: strconv.Itoa(user.Speed)},
 			"Pitch":    &types.AttributeValueMemberN{Value: strconv.Itoa(user.Pitch)},
 		},
