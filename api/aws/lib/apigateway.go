@@ -12,7 +12,7 @@ import (
 // Create API Func
 // Parameters: createUserLambda, getUserLambda, pollySynthesizeLambda
 // Return Type: awsapigateway.RestApi 
-func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserLambda awslambda.Function , pollySynthesizeLambda awslambda.Function ) awsapigateway.RestApi {
+func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserLambda awslambda.Function , pollySynthesizeLambda awslambda.Function, openAIResponseLambda awslambda.Function) awsapigateway.RestApi {
     
 	// Create API Gateway
 	restApi := awsapigateway.NewRestApi(stack, jsii.String("OvertoneAPI"), &awsapigateway.RestApiProps{
@@ -98,6 +98,18 @@ func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserL
 			
 		},
 	)
+
+	// Add a POST endpoint to respond to user input
+	openAIResource := userResource.AddResource(jsii.String("message"), nil)
+	openAIResource.AddMethod(
+		jsii.String("POST"),
+		awsapigateway.NewLambdaIntegration(openAIResponseLambda, &awsapigateway.LambdaIntegrationOptions{}),
+		&awsapigateway.MethodOptions{
+			// Authorizer:        authorizer,
+			// AuthorizationType: awsapigateway.AuthorizationType_COGNITO,
+		},
+	)
+
 		// log lambda function ARN
 	awscdk.NewCfnOutput(stack, jsii.String("lambdaFunctionArn"), &awscdk.CfnOutputProps{
 		Value:       createUserLambda.FunctionArn(),

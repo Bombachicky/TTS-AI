@@ -13,10 +13,8 @@ function ChatBox() {
 
     try {
       const response = await axios.post(
-        "https://5f0ek1er9i.execute-api.us-east-1.amazonaws.com/prod/users/message",
-        {
-          message: message,
-        }
+        'https://5f0ek1er9i.execute-api.us-east-1.amazonaws.com/prod/users/message',
+        message
       );
       console.log(response.data);
     } catch (error) {

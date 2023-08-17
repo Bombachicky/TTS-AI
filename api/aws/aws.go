@@ -28,9 +28,10 @@ func OvertoneStack(scope constructs.Construct, id string, props *OvertoneProps) 
 	createUserLambda := lib.CreateUserLambda(stack, lambdaRole)
 	getUserLambda := lib.GetUserLambda(stack, lambdaRole)
 	createPollySynthesizeLambda := lib.CreatePollySynthesizeLambda(stack, lambdaRole)
+	createOpenAIResponseLambda := lib.CreateOpenAIResponseLambda(stack, lambdaRole)
 
 	// Create API and Endpoints and Add Cognito Authorizer
-	lib.CreateAPI(stack, createUserLambda, getUserLambda, createPollySynthesizeLambda)
+	lib.CreateAPI(stack, createUserLambda, getUserLambda, createPollySynthesizeLambda, createOpenAIResponseLambda)
 	return stack
 }
 

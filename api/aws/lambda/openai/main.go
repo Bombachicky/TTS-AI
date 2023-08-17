@@ -1,13 +1,13 @@
 package main
 
 import (
-	"fmt"
-	openai "github.com/sashabaranov/go-openai"
 	"context"
-	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/aws/aws-lambda-go/events"
-	"github.com/joho/godotenv"
+	"fmt"
 	"os"
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/joho/godotenv"
+	openai "github.com/sashabaranov/go-openai"
 )
 
 var openaiClient *openai.Client;
@@ -25,15 +25,24 @@ func init() {
 
 func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	var text = request.Body
-
+	text := request.Body
 	response, err := generateResponse(text)
 
 	if err != nil {
-		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil
+		return events.APIGatewayProxyResponse{Body: "Error generating response", StatusCode: 500, Headers: map[string]string{
+			"Access-Control-Allow-Origin":"*",
+			"Access-Control-Allow-Credentials": "true",
+			"Access-Control-Allow-Methods": "POST, GET, OPTIONS", // Add any other methods you'd want to support
+			"Access-Control-Allow-Headers": "Content-Type, Authorization", // Add other headers you might be sending in requests
+		}}, err
 	}
 
-	return events.APIGatewayProxyResponse{Body: response, StatusCode: 200}, nil
+	return events.APIGatewayProxyResponse{Body: response, StatusCode: 200, Headers: map[string]string{
+        "Access-Control-Allow-Origin":  "*",
+        "Access-Control-Allow-Credentials": "true",
+		"Access-Control-Allow-Methods": "POST, GET, OPTIONS", // Add any other methods you'd want to support
+    	"Access-Control-Allow-Headers": "Content-Type, Authorization", // Add other headers you might be sending in requests
+    }}, nil
 }
 
 func generateResponse(text string) (string, error) {
