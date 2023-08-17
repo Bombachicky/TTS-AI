@@ -9,11 +9,11 @@ import (
 )
 
 func CreateDynamoTable(stack awscdk.Stack) awsdynamodb.Table {
-    return awsdynamodb.NewTable(stack, jsii.String("OvertoneTable"), &awsdynamodb.TableProps{
+    return awsdynamodb.NewTable(stack, jsii.String("OverToneTable"), &awsdynamodb.TableProps{
         BillingMode: awsdynamodb.BillingMode_PAY_PER_REQUEST,
-		TableName:   jsii.String("OvertoneTable"),
+		TableName:   jsii.String("OverToneTable"),
 		PartitionKey: &awsdynamodb.Attribute{
-			Name: aws.String("UserId"),
+			Name: aws.String("Email"),
 			Type: awsdynamodb.AttributeType_STRING,
 		},
     })
