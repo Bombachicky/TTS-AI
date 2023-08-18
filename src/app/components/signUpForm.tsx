@@ -2,13 +2,12 @@
 import axios from "axios"; // Import the axios library
 import React, { useState } from 'react';
 import { CognitoUserPool, CognitoUserAttribute, CognitoUser } from 'amazon-cognito-identity-js';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
+
 
 
 const poolData = {
-  UserPoolId: 'us-east-1_Fpb7NRVKx',
-  ClientId: '26f417pgvorf5153k52pbdvi2j'
+  UserPoolId: 'us-east-1_GK803msTN',
+  ClientId: '4a4h6a1hc0ev7r87hddul04l3r'
 };
 
 const userPool = new CognitoUserPool(poolData);
