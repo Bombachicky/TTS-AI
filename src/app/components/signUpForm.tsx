@@ -29,17 +29,6 @@ export default function SignUp() {
     const password = formData.get("password") as string;
     const username = formData.get("username") as string;
 
-    try {
-      const response = await axios.post(
-        'https://5f0ek1er9i.execute-api.us-east-1.amazonaws.com/prod/users/synthesize',
-      );
-      console.log('User added to DB:', response.data);
-      // Handle other success logic here, like redirecting the user or showing a confirmation.
-    } catch (error) {
-      console.error('Error adding to DB:', error);
-    }
-
-
     // Create a new attribute list for Cognito user
     const attributeList = [
       new CognitoUserAttribute({ Name: 'email', Value: email }),

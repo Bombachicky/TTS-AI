@@ -35,6 +35,8 @@ func init() {
 }
 
 func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+	
 	// Parse body
 	var user User
 	err := json.Unmarshal([]byte(request.Body), &user)

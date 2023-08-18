@@ -6,7 +6,7 @@ import (
     "github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
     "github.com/aws/jsii-runtime-go"
 	"github.com/aws/aws-cdk-go/awscdk/v2"
-	
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
 )
 
 // Create API Func
@@ -30,8 +30,8 @@ func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserL
 	})
 
 	// Create Cognito User Pool With Required Attributes : Email And Auto Email Verification
-	userPool := awscognito.NewUserPool(stack, jsii.String("OTUserPool"), &awscognito.UserPoolProps{
-		UserPoolName: jsii.String("OTUserPool"),
+	userPool := awscognito.NewUserPool(stack, jsii.String("OTUsers"), &awscognito.UserPoolProps{
+		UserPoolName: jsii.String("OTUsers"),
 		SignInAliases: &awscognito.SignInAliases{
 			Email:    jsii.Bool(true),
 		},
@@ -47,12 +47,30 @@ func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserL
 		// Add other desired properties...
 	})
 
+	
 	// User Pool Client
 	awscognito.NewUserPoolClient(stack, jsii.String("MyAppClient"), &awscognito.UserPoolClientProps{
 		UserPool: userPool,
 		GenerateSecret: jsii.Bool(false), // Set to true if you need a secret (commonly for server-side apps)
 		// ... other App Client configurations ...
 	})
+
+	
+	awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
+		// Restrict to listing and describing tables
+		Principals: &[]awsiam.IPrincipal{
+			awsiam.NewAnyPrincipal(),
+		},
+		Actions: &[]*string{
+			jsii.String("cognito-idp:ValidateUserPoolToken"),
+		},
+		Resources: &[]*string{
+			jsii.String(*userPool.UserPoolArn()),
+		},
+		Effect:    awsiam.Effect_ALLOW,
+	})
+	
+
 
 	// User Pool Authorization
 	authorizer := awsapigateway.NewCognitoUserPoolsAuthorizer(stack, jsii.String("APIGatewayAuthorizer"), &awsapigateway.CognitoUserPoolsAuthorizerProps{
@@ -69,8 +87,6 @@ func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserL
 		&awsapigateway.MethodOptions{
 			Authorizer:        authorizer,
 			AuthorizationType: awsapigateway.AuthorizationType_COGNITO,
-			
-			
 		},
 		
 	)
