@@ -2,13 +2,10 @@
 import axios from "axios"; // Import the axios library
 import React, { useState } from 'react';
 import { CognitoUserPool, CognitoUserAttribute, CognitoUser } from 'amazon-cognito-identity-js';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-
 
 const poolData = {
-  UserPoolId: 'us-east-1_Fpb7NRVKx',
-  ClientId: '26f417pgvorf5153k52pbdvi2j'
+  UserPoolId: 'us-east-1_GK803msTN',
+  ClientId: '4a4h6a1hc0ev7r87hddul04l3r'
 };
 
 const userPool = new CognitoUserPool(poolData);
@@ -31,6 +28,16 @@ export default function SignUp() {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const username = formData.get("username") as string;
+
+    try {
+      const response = await axios.post(
+        'https://5f0ek1er9i.execute-api.us-east-1.amazonaws.com/prod/users/synthesize',
+      );
+      console.log('User added to DB:', response.data);
+      // Handle other success logic here, like redirecting the user or showing a confirmation.
+    } catch (error) {
+      console.error('Error adding to DB:', error);
+    }
 
 
     // Create a new attribute list for Cognito user
