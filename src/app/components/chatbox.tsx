@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import axios from "axios";
+import { UserMessage, AIMessage } from "./message";
 
 function ChatBox() {
   const [message, setMessage] = useState("");
@@ -13,7 +14,7 @@ function ChatBox() {
 
     try {
       const response = await axios.post(
-        'https://5f0ek1er9i.execute-api.us-east-1.amazonaws.com/prod/users/message',
+        "https://5f0ek1er9i.execute-api.us-east-1.amazonaws.com/prod/users/message",
         message
       );
       console.log(response.data);
@@ -24,24 +25,25 @@ function ChatBox() {
 
   return (
     <>
-      <div className="flex flex-col gap-28">
-        <div className="text-white border-2 border-gray-800 rounded-xl m-8 h-96">
-          <div>HIIIi</div>
-          <div>ok</div>
-        </div>
-        <div>
-          <form className="flex justify-center" onSubmit={handleMessage}>
-            <input
-              id="message"
-              name="message"
-              type="text"
-              placeholder="Type a message"
-              required
-              className="w-2/3 h-10 px-4 rounded-xl"
-            />
-          </form>
+      <div className="flex flex-col pt-8 items-center">
+        <div className="flex flex-col w-full px-8">
+          {/* This is where the chat logs will go */}
+          <UserMessage message="Hello, I am Bomba" />
+          <AIMessage message="[GPT Message]" />
+          <UserMessage message="How are you?" />
+          <AIMessage message="[GPT Message]" />
         </div>
       </div>
+      <form className="flex justify-center fixed w-full mt-20">
+        <input
+          id="message"
+          name="message"
+          type="text"
+          placeholder="Type a message"
+          required
+          className="w-2/3 h-10 px-4 rounded-xl"
+        />
+      </form>
     </>
   );
 }
