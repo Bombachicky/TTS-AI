@@ -1,6 +1,6 @@
 go 1.23
 
 use (
-	
 	./api/aws
+	./api/local
 )
