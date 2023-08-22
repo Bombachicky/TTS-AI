@@ -10,6 +10,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	//"github.com/joho/godotenv"
 	"github.com/sashabaranov/go-openai"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+
 )
 
 // func getAPIKey() (string, error) {
@@ -48,6 +50,8 @@ func main() {
 	// Create a new Fiber app
 	app := fiber.New()
 
+	app.Use(cors.New())
+
 	// Create POST request to receive ChatGPT response from user input
 	app.Post("/message", func(c *fiber.Ctx) error {
 
@@ -57,7 +61,7 @@ func main() {
 		// 	return c.Status(500).SendString("Error getting API key")
 		// }
 
-		openaiClient := openai.NewClient("OPENAI_API_KEY")
+		openaiClient := openai.NewClient("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")
 
 		var input string
 		err := json.Unmarshal([]byte(c.Body()), &input)

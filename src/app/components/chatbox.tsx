@@ -14,10 +14,10 @@ function ChatBox() {
 
     try {
       const response = await axios.post(
-        "https://5f0ek1er9i.execute-api.us-east-1.amazonaws.com/prod/users/message",
-        message
+        "http://localhost:3000/message",
+        JSON.stringify(message)
       );
-      console.log(response.data);
+      setMessage(response.data);
     } catch (error) {
       console.log("Error: " + error);
     }
@@ -29,12 +29,10 @@ function ChatBox() {
         <div className="flex flex-col w-full px-8">
           {/* This is where the chat logs will go */}
           <UserMessage message="Hello, I am Bomba" />
-          <AIMessage message="[GPT Message]" />
-          <UserMessage message="How are you?" />
-          <AIMessage message="[GPT Message]" />
+          <AIMessage message={message} />
         </div>
       </div>
-      <form className="flex justify-center fixed w-full mt-20">
+      <form className="flex justify-center fixed w-full mt-20" onSubmit={handleMessage}>
         <input
           id="message"
           name="message"
