@@ -61,7 +61,7 @@ func main() {
 		// 	return c.Status(500).SendString("Error getting API key")
 		// }
 
-		openaiClient := openai.NewClient("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")
+		openaiClient := openai.NewClient("OPENAI_API_KEY")
 
 		var input string
 		err := json.Unmarshal([]byte(c.Body()), &input)
