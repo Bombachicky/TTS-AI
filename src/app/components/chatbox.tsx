@@ -1,28 +1,34 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { UserMessage, AIMessage } from "./message";
 
-function ChatBox() {
+interface messageLog {
+  log: string[];
+}
+
+function ChatBox({ log }: messageLog) {
   const [message, setMessage] = useState("");
   const [AImessage, setAIMessage] = useState("");
+  const [messagelog, setMessageLog] = useState(log);
 
-  const handleMessage = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const input = formData.get("message") as string;
-    setMessage(input);
 
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/message",
-        JSON.stringify(message)
-      );
-      setAIMessage(response.data);
-    } catch (error) {
-      console.log("Error: " + error);
-    }
+    log.push(message);
+    setMessageLog(log);
+
+    let input = document.getElementById("message") as HTMLInputElement;
+    input.value = "";
+    setMessage("");
   };
+
+  let chat = messagelog.map((message, index) => {
+    if (index % 2 === 0) {
+      return <UserMessage message={message} />;
+    }
+    return <AIMessage message={message} />;
+  });
 
   return (
     <>
@@ -31,11 +37,13 @@ function ChatBox() {
           className="flex flex-row justify-center w-2/3 backdrop-blur-lg"
           onSubmit={handleMessage}>
           <input
+            id="message"
             name="message"
             type="text"
             placeholder="Type a message"
             required
             className="w-full h-10 px-4 rounded-xl"
+            onChange={(e) => setMessage(e.target.value)}
           />
           <button
             type="submit"
@@ -53,8 +61,7 @@ function ChatBox() {
       <div className="flex flex-col pt-8 items-center">
         <div className="flex flex-col w-full px-8">
           {/* This is where the chat logs will go */}
-          <UserMessage message={message} />
-          <AIMessage message={AImessage} />
+          {chat}
         </div>
       </div>
     </>

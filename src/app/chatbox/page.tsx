@@ -1,9 +1,10 @@
 import ChatBox from "../components/chatbox";
 
 function ChatPage() {
+  let messageLog: string[] = [];
   return (
     <div>
-      <ChatBox />
+      <ChatBox log={messageLog}/>
     </div>
   );
 }
