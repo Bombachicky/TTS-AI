@@ -18,6 +18,19 @@ function ChatBox({ log }: messageLog) {
     log.push(message);
     setMessageLog(log);
 
+    axios
+      .post("http://localhost:3001/message", JSON.stringify(message))
+      .then((res) => {
+        setAIMessage(res.data);
+        log.push(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    
+    setMessageLog(log);
+    console.log(AIMessage);
+
     let input = document.getElementById("message") as HTMLInputElement;
     input.value = "";
     setMessage("");
