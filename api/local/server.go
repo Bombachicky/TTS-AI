@@ -2,28 +2,27 @@ package main
 
 import (
 	"encoding/json"
-	//"fmt"
-	//"os"
+	"fmt"
+	"os"
 	//"github.com/aws/aws-sdk-go/aws"
 	//"github.com/aws/aws-sdk-go/service/dynamodb"
 	//"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/gofiber/fiber/v2"
-	//"github.com/joho/godotenv"
-	"github.com/sashabaranov/go-openai"
+	"github.com/joho/godotenv"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-
+	"github.com/sashabaranov/go-openai"
 )
 
-// func getAPIKey() (string, error) {
-// 	err := godotenv.Load()
+func getAPIKey() (string, error) {
+	err := godotenv.Load()
 
-// 	if err != nil {
-// 		fmt.Println("Error loading .env file")
-// 		return "", err
-// 	}
+	if err != nil {
+		fmt.Println("Error loading .env file")
+		return "", err
+	}
 
-// 	return os.Getenv("OPENAI_API_KEY"), nil
-// }
+	return os.Getenv("OPENAI_API_KEY"), nil
+}
 
 func main() {
 
@@ -55,16 +54,16 @@ func main() {
 	// Create POST request to receive ChatGPT response from user input
 	app.Post("/message", func(c *fiber.Ctx) error {
 
-		// apiKey, err := getAPIKey()
+		apiKey, err := getAPIKey()
 
-		// if err != nil {
-		// 	return c.Status(500).SendString("Error getting API key")
-		// }
+		if err != nil {
+			return c.Status(500).SendString("Error getting API key")
+		}
 
-		openaiClient := openai.NewClient("OPENAI_API_KEY")
+		openaiClient := openai.NewClient(apiKey)
 
 		var input string
-		err := json.Unmarshal([]byte(c.Body()), &input)
+		err = json.Unmarshal([]byte(c.Body()), &input)
 
 		if err != nil {
 			return c.Status(500).SendString("Error unmarshalling JSON")
