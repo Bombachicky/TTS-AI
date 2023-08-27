@@ -29,7 +29,6 @@ function ChatBox({ log }: messageLog) {
       });
     
     setMessageLog(log);
-    console.log(AIMessage);
 
     let input = document.getElementById("message") as HTMLInputElement;
     input.value = "";
