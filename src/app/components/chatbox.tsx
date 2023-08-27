@@ -9,30 +9,26 @@ interface messageLog {
 
 function ChatBox({ log }: messageLog) {
   const [message, setMessage] = useState("");
-  const [AImessage, setAIMessage] = useState("");
   const [messagelog, setMessageLog] = useState(log);
+  const [disable, setDisable] = useState(false);
+
+  let disabled = disable ? " bg-gray-300" : "";
 
   const handleMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     log.push(message);
-    setMessageLog(log);
-
-    axios
-      .post("http://localhost:3001/message", JSON.stringify(message))
-      .then((res) => {
-        setAIMessage(res.data);
-        log.push(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    
+    log.push(message);
     setMessageLog(log);
 
     let input = document.getElementById("message") as HTMLInputElement;
     input.value = "";
-    setMessage("");
+
+    setDisable(true);
+
+    setTimeout(() => {
+      setDisable(false);
+    }, 2000);
   };
 
   let chat = messagelog.map((message, index) => {
@@ -54,7 +50,8 @@ function ChatBox({ log }: messageLog) {
             type="text"
             placeholder="Type a message"
             required
-            className="w-full h-10 px-4 rounded-xl"
+            disabled={disable}
+            className={"w-full h-10 px-4 rounded-xl" + disabled}
             onChange={(e) => setMessage(e.target.value)}
           />
           <button
