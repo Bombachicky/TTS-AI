@@ -6,8 +6,8 @@ import { CognitoUserPool, CognitoUserAttribute, CognitoUser } from 'amazon-cogni
 
 
 const poolData = {
-  UserPoolId: 'us-east-1_GK803msTN',
-  ClientId: '4a4h6a1hc0ev7r87hddul04l3r'
+  UserPoolId: 'us-east-1_GJv3BEuQQ',
+  ClientId: '4ab88mrp1nq1om903il5lnmerv'
 };
 
 const userPool = new CognitoUserPool(poolData);
@@ -49,7 +49,7 @@ export default function SignUp() {
 
       console.log('User signed up:', result);
       setEmail(email);
-      setUserName(userName);
+      setUserName(username);
       setIsCodeSent(true);
 
     });
@@ -94,7 +94,7 @@ export default function SignUp() {
       };
       try {
         const response = await axios.post(
-          'https://5f0ek1er9i.execute-api.us-east-1.amazonaws.com/prod/users',
+          'https://5f0ek1er9i.execute-api.us-east-1.amazonaws.com/prod/users/sign-up',
           userData
         );
         console.log('User added to DB:', response.data);
@@ -103,30 +103,14 @@ export default function SignUp() {
         console.error('Error adding to DB:', error);
       }
     });
-    // Create user data Json to add to DB
+
 
 
 
   };
 
-  const addUserToDB = async (userData: any) => {
-    try {
-      const response = await axios.post(
-        'https://5f0ek1er9i.execute-api.us-east-1.amazonaws.com/prod/users',
-        userData
-      );
-      console.log('User added to DB:', response.data);
-      // Redirect or update app state as needed
-    } catch (error) {
-      console.log("Could not add user to DB: " + error);
-      console.error('Error adding to DB:', error);
-    }
-  };
 
 
-  const test = () => {
-    setIsCodeSent(true);
-  };
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">

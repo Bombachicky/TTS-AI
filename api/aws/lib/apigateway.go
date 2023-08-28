@@ -30,8 +30,8 @@ func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserL
 	})
 
 	// Create Cognito User Pool With Required Attributes : Email And Auto Email Verification
-	userPool := awscognito.NewUserPool(stack, jsii.String("OTUserPool"), &awscognito.UserPoolProps{
-		UserPoolName: jsii.String("OTUserPool"),
+	userPool := awscognito.NewUserPool(stack, jsii.String("UserPool"), &awscognito.UserPoolProps{
+		UserPoolName: jsii.String("UserPool"),
 		SignInAliases: &awscognito.SignInAliases{
 			Email:    jsii.Bool(true),
 		},
@@ -72,10 +72,45 @@ func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserL
 			
 			
 		},
-		
 	)
 
-	// Sign In Page EndPoint With Cognito Authorizer: GET
+	// Enpoint to add users info to DB after cognito sign-up: POST
+	userDbResource := userResource.AddResource(jsii.String("sign-up"), nil)
+	userDbResource.AddMethod(
+		jsii.String("POST"),
+		awsapigateway.NewLambdaIntegration(createUserLambda, &awsapigateway.LambdaIntegrationOptions{}),
+		&awsapigateway.MethodOptions{
+			// Authorizer:        authorizer,
+			// AuthorizationType: awsapigateway.AuthorizationType_COGNITO,
+			
+		},
+	)
+
+	userSignIn:= userResource.AddResource(jsii.String("sign-in"), nil)
+	userSignIn.AddMethod(
+		jsii.String("GET"),
+		awsapigateway.NewLambdaIntegration(getUserLambda, &awsapigateway.LambdaIntegrationOptions{}),
+		&awsapigateway.MethodOptions{
+			Authorizer:        authorizer,
+			AuthorizationType: awsapigateway.AuthorizationType_COGNITO,
+			
+		},
+	)
+
+	// // Enpoint to add users info to DB: POST
+	// userDbResource := userResource.AddResource(jsii.String("add"), nil)
+	// userDbResource.AddMethod(
+	// 	jsii.String("POST"),
+	// 	awsapigateway.NewLambdaIntegration(createUserLambda, &awsapigateway.LambdaIntegrationOptions{}),
+	// 	&awsapigateway.MethodOptions{
+	// 		// Authorizer:        authorizer,
+	// 		// AuthorizationType: awsapigateway.AuthorizationType_COGNITO,
+			
+	// 	},
+	// )
+
+
+	//Sign In Page EndPoint With Cognito Authorizer: GET
 	userIdResource := userResource.AddResource(jsii.String("{userId}"), nil)
 	userIdResource.AddMethod(
 		jsii.String("GET"),

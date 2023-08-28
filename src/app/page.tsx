@@ -11,13 +11,6 @@ export default function Home() {
             <Navbar></Navbar>
             <h1 className="text-primary text-center mt-4 font-weight:700">Home Page</h1>
 
-            {/* <div>
-            <input className=" text-center" id="verification-code" type="text" placeholder="Enter verification code" />
-            <button className="text-primary" onClick={handleCodeVerification}>Verify</button>
-           </div>
-
- */}
-
 
         </div></>
     )
