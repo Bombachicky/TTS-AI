@@ -8,8 +8,8 @@ interface MessageProps {
 export function UserMessage({ message }: MessageProps) {
   return (
     <>
-      <div className="flex justify-end py-2 px-2 animate-fadeDown">
-        <div className="text-black bg-gray-100 rounded-xl p-4 max-w-2xl break-words">
+      <div className="flex justify-end py-2 px-8 animate-fadeDown">
+        <div className="text-black bg-gray-100 rounded-xl p-4 max-w-2xl break-words shadow-md shadow-gray-500">
           <div>{message}</div>
         </div>
       </div>
@@ -32,9 +32,8 @@ export function AIMessage({ message }: MessageProps) {
       .catch((err) => {
         setError(true);
         setLoading(false);
-        setAImessage("Error in generating response");
       });
-  }, [message]);
+  }, []);
 
   return (
     <>
@@ -42,11 +41,15 @@ export function AIMessage({ message }: MessageProps) {
         loading ? (
           <div className="text-white">Loading...</div>
         ) : (
-          <div className="text-white">{AImessage}</div>
+          <div className="flex justify-start py-2 px-8 animate-fadeDown">
+            <div className="text-white bg-gray-600 rounded-xl p-4 max-w-lg break-words shadow-md shadow-gray-100">
+              <div>Error in generating response</div>
+            </div>
+          </div>
         )
       ) : (
-        <div className="flex justify-start py-2 px-2 animate-fadeDown">
-          <div className="text-white bg-blue-600 rounded-xl p-4 max-w-2xl break-words">
+        <div className="flex justify-start py-2 px-8 animate-fadeDown">
+          <div className="text-white bg-gray-600 rounded-xl p-4 max-w-lg break-words shadow-md shadow-gray-100">
             <div>{AImessage}</div>
           </div>
         </div>

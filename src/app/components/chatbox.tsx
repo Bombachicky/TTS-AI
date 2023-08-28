@@ -58,16 +58,22 @@ function ChatBox({ log }: messageLog) {
             type="submit"
             className="flex items-center justify-center w-10 h-10 ml-2 rounded-xl bg-blue-500 hover:bg-blue-600">
             <svg
-              className="w-6 h-6 text-white fill-current"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24">
-              <path d="M2 12l2-2h14v4H4l-2 2z" />
-              <path d="M21 12c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9 9-4.03 9-9zm-2 0c0 3.86-3.14 7-7 7s-7-3.14-7-7 3.14-7 7-7 7 3.14 7 7z" />
+              className="text-white hover:rotate-90 duration-300"
+              clip-rule="evenodd"
+              fill-rule="evenodd"
+              stroke-linejoin="round"
+              stroke-miterlimit="2"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="m10.211 7.155c-.141-.108-.3-.157-.456-.157-.389 0-.755.306-.755.749v8.501c0 .445.367.75.755.75.157 0 .316-.05.457-.159 1.554-1.203 4.199-3.252 5.498-4.258.184-.142.29-.36.29-.592 0-.23-.107-.449-.291-.591zm.289 7.563v-5.446l3.522 2.719z"
+                fill-rule="nonzero"
+              />
             </svg>
           </button>
         </form>
       </div>
-      <div className="flex flex-col pt-8 items-center">
+      <div className="flex flex-col pt-8 items-center mb-32">
         <div className="flex flex-col w-full px-8">
           {/* This is where the chat logs will go */}
           {chat}
