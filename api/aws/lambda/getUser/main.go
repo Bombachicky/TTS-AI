@@ -14,10 +14,8 @@ import (
 )
 
 type User struct {
-	UserId string `json:"userId"`
 	Email string `json:"email"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+    Username string `json:"username"`
 	Speed int `json:"speed"`
 	Pitch int `json:"pitch"`
 }
@@ -36,12 +34,12 @@ func init() {
 
 
 
-// Get a user by UserId from DynamoDB
-func GetUser(ctx context.Context, userId string) (User, error) {
+
+func GetUser(ctx context.Context, Username string) (User, error) {
     input := &dynamodb.GetItemInput{
-        TableName: aws.String("OvertoneTable"),
+        TableName: aws.String("OTtable"),
         Key: map[string]types.AttributeValue{
-            "UserId": &types.AttributeValueMemberS{Value: userId},
+            "username": &types.AttributeValueMemberS{Value: Username},
         },
     }
 
@@ -55,10 +53,7 @@ func GetUser(ctx context.Context, userId string) (User, error) {
     }
 
     user := User{
-    UserId:   result.Item["UserId"].(*types.AttributeValueMemberS).Value,
-    Email:    result.Item["Email"].(*types.AttributeValueMemberS).Value,
-    Username: result.Item["Username"].(*types.AttributeValueMemberS).Value,
-    Password: result.Item["Password"].(*types.AttributeValueMemberS).Value,
+    Email: result.Item["Email"].(*types.AttributeValueMemberS).Value,
 	}
 
 	speed, err := strconv.Atoi(result.Item["Speed"].(*types.AttributeValueMemberN).Value)
@@ -77,11 +72,11 @@ func GetUser(ctx context.Context, userId string) (User, error) {
 }
 
 func handleGetUserRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-   userId, ok := request.PathParameters["userId"]
-    if !ok || userId == "" {
-        return events.APIGatewayProxyResponse{Body: "UserId parameter is required", StatusCode: 400}, nil
+   userName, ok := request.PathParameters["username"]
+    if !ok || userName == "" {
+        return events.APIGatewayProxyResponse{Body: "Username parameter is required", StatusCode: 400}, nil
     }
-    user, err := GetUser(ctx, userId)
+    user, err := GetUser(ctx, userName)
     if err != nil {
         if err.Error() == "User not found" {
             return events.APIGatewayProxyResponse{Body: "User not found", StatusCode: 404}, nil
