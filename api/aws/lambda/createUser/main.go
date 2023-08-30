@@ -90,7 +90,7 @@ func CreateUser(ctx context.Context, user User) (User, error) {
 
 
 	input := &dynamodb.PutItemInput{
-		TableName: aws.String("OverToneTable"),
+		TableName: aws.String("OTtable"),
 		Item: map[string]types.AttributeValue{
 			"Email":    &types.AttributeValueMemberS{Value: user.Email},
 			"Username": &types.AttributeValueMemberS{Value: user.Username},

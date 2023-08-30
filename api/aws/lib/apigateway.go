@@ -97,21 +97,8 @@ func CreateAPI(stack awscdk.Stack, createUserLambda awslambda.Function, getUserL
 		},
 	)
 
-	// // Enpoint to add users info to DB: POST
-	// userDbResource := userResource.AddResource(jsii.String("add"), nil)
-	// userDbResource.AddMethod(
-	// 	jsii.String("POST"),
-	// 	awsapigateway.NewLambdaIntegration(createUserLambda, &awsapigateway.LambdaIntegrationOptions{}),
-	// 	&awsapigateway.MethodOptions{
-	// 		// Authorizer:        authorizer,
-	// 		// AuthorizationType: awsapigateway.AuthorizationType_COGNITO,
-			
-	// 	},
-	// )
-
-
 	//Sign In Page EndPoint With Cognito Authorizer: GET
-	userIdResource := userResource.AddResource(jsii.String("{userId}"), nil)
+	userIdResource := userResource.AddResource(jsii.String("{Username}"), nil)
 	userIdResource.AddMethod(
 		jsii.String("GET"),
 		awsapigateway.NewLambdaIntegration(getUserLambda, &awsapigateway.LambdaIntegrationOptions{}),
