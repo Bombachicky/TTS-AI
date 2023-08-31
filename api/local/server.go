@@ -1,27 +1,68 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"os"
-	//"github.com/aws/aws-sdk-go/aws"
+
+	//"os"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
+	"github.com/aws/aws-sdk-go/aws"
+
 	//"github.com/aws/aws-sdk-go/service/dynamodb"
 	//"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/gofiber/fiber/v2"
-	"github.com/joho/godotenv"
+	//"github.com/joho/godotenv"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/sashabaranov/go-openai"
 )
 
+func parseAPIKey(secretString string) (string, error) {
+
+	size := len(secretString)
+
+	for i := 0; i < size; i++ {
+		if secretString[i] == ':' {
+			return secretString[i+2:size-2], nil
+		}
+	}
+
+	return "", nil
+}
+
 func getAPIKey() (string, error) {
-	err := godotenv.Load()
+	
+	config, err := config.LoadDefaultConfig(context.TODO())
 
 	if err != nil {
-		fmt.Println("Error loading .env file")
+		fmt.Println("Error loading config")
 		return "", err
 	}
 
-	return os.Getenv("OPENAI_API_KEY"), nil
+	client := secretsmanager.NewFromConfig(config)
+
+	input := &secretsmanager.GetSecretValueInput{
+		SecretId: aws.String("OpenAI"),
+	}
+
+	secretValue, err := client.GetSecretValue(context.Background(), input)
+
+	if err != nil {
+		fmt.Println("Error getting secret value")
+		return "", err
+	}
+
+	apiKey := *secretValue.SecretString
+
+	apiKey, err = parseAPIKey(apiKey)
+
+	if err != nil {
+		fmt.Println("Error parsing API key")
+		return "", err
+	}
+
+	return apiKey, nil
 }
 
 func main() {
