@@ -3,23 +3,57 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/joho/godotenv"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
+	"github.com/aws/aws-sdk-go/aws"
 	openai "github.com/sashabaranov/go-openai"
 )
 
 var openaiClient *openai.Client;
 
-func init() {
-	err := godotenv.Load()
+func parseAPIKey(secretString string) (string, error) {
 
-	if err != nil {
-		fmt.Println("Error loading .env file")
+	size := len(secretString)
+
+	for i := 0; i < size; i++ {
+		if secretString[i] == ':' {
+			return secretString[i+2:size-2], nil
+		}
 	}
 
-	apiKey := os.Getenv("OPENAI_API_KEY")
+	return "", nil
+}
+
+func init() {
+	config, err := config.LoadDefaultConfig(context.TODO())
+
+	if err != nil {
+		fmt.Println("Error loading config")
+	}
+
+	client := secretsmanager.NewFromConfig(config)
+
+	input := &secretsmanager.GetSecretValueInput{
+		SecretId: aws.String("OpenAI"),
+	}
+
+	secretValue, err := client.GetSecretValue(context.Background(), input)
+
+	if err != nil {
+		fmt.Println("Error getting secret value")
+	}
+
+	apiKey := *secretValue.SecretString
+
+	apiKey, err = parseAPIKey(apiKey)
+
+	if err != nil {
+		fmt.Println("Error parsing API key")
+	}
+
 	openaiClient = openai.NewClient(apiKey)
 }
 

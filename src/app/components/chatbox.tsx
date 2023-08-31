@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import axios from "axios";
 import { UserMessage, AIMessage } from "./message";
 
 interface messageLog {
@@ -31,7 +30,7 @@ function ChatBox({ log }: messageLog) {
     }, 2000);
   };
 
-  let chat = messagelog.map((message, index) => {
+  let chat = messagelog.map((message: string, index: number) => {
     if (index % 2 === 0) {
       return <UserMessage message={message} />;
     }
